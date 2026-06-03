@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Eats With Ne 🍴 | LA Food Creator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;500;600;700;800;900&family=Pacifico&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --red: #E8192C;
+    --red-soft: #FF4D5E;
+    --gold: #F0B429;
+    --gold-light: #FFD97D;
+    --black: #1A1A1A;
+    --cream: #FFF8F0;
+    --white: #FFFFFF;
+    --gray: #F5F0EB;
+    --text-dark: #2D2D2D;
+    --text-mid: #6B6B6B;
+  }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--cream);
+    color: var(--text-dark);
+    font-family: 'Nunito', sans-serif;
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* CURSOR */
+  .cursor-dot {
+    width: 10px; height: 10px; background: var(--red); border-radius: 50%;
+    position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9999;
+    transform: translate(-50%,-50%); transition: transform 0.1s;
+  }
+  .cursor-blob {
+    width: 40px; height: 40px; background: rgba(240,180,41,0.25); border-radius: 50%;
+    position: fixed; top: 0; left: 0; pointer-events: none; z-index: 9998;
+    transform: translate(-50%,-50%); transition: left 0.18s ease, top 0.18s ease;
+  }
+
+  /* TICKER */
+  .ticker-wrap { background: var(--red); padding: 10px 0; overflow: hidden; }
+  .ticker { display: flex; white-space: nowrap; animation: ticker 30s linear infinite; }
+  .ticker-item {
+    font-family: 'Fredoka One', cursive; font-size: 15px; letter-spacing: 0.5px;
+    color: var(--white); padding: 0 28px;
+  }
+  .ticker-item .star { color: var(--gold-light); margin-left: 28px; }
+  @keyframes ticker { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+
+  /* NAV */
+  nav {
+    position: sticky; top: 0; z-index: 500;
+    background: var(--white);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    padding: 0 32px;
+    display: flex; align-items: center; justify-content: space-between;
+    min-height: 68px;
+  }
+  .nav-logo {
+    font-family: 'Pacifico', cursive; font-size: 24px;
+    color: var(--red); text-decoration: none;
+    display: flex; align-items: center; gap: 8px; flex-shrink: 0;
+  }
+  .nav-tabs {
+    display: flex; gap: 4px; list-style: none;
+    overflow-x: auto; scrollbar-width: none; padding: 10px 0;
+    flex: 1; justify-content: flex-end;
+  }
+  .nav-tabs::-webkit-scrollbar { display: none; }
+  .nav-tabs li button {
+    display: flex; align-items: center; gap: 5px;
+    padding: 8px 13px; border: 2.5px solid transparent; border-radius: 100px;
+    background: transparent; font-family: 'Nunito', sans-serif;
+    font-size: 13px; font-weight: 700; color: var(--text-mid);
+    cursor: pointer; white-space: nowrap; transition: all 0.22s ease;
+  }
+  .nav-tabs li button:hover { background: var(--gray); color: var(--text-dark); }
+  .nav-tabs li button.active {
+    background: var(--red); color: var(--white); border-color: var(--red);
+    box-shadow: 0 4px 14px rgba(232,25,44,0.3); transform: translateY(-1px);
+  }
+
+  /* SECTION SYSTEM */
+  section { display: none; }
+  section.visible { display: block; animation: popIn 0.42s cubic-bezier(0.34,1.56,0.64,1) forwards; }
+  @keyframes popIn { from{opacity:0;transform:scale(0.97) translateY(12px)} to{opacity:1;transform:scale(1) translateY(0)} }
+
+  /* ══════════════════════
+     HOME
+  ══════════════════════ */
+  #home { background: var(--cream); }
+
+  /* ── HERO ── */
+  .hero {
+    padding: 64px 56px 0;
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 56px; align-items: center;
+    max-width: 1240px; margin: 0 auto;
+  }
+
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--gold-light); color: var(--black);
+    font-family: 'Fredoka One', cursive; font-size: 13px; letter-spacing: 0.5px;
+    padding: 8px 16px; border-radius: 100px; margin-bottom: 20px;
+  }
+  .hero-badge .blink {
+    width: 8px; height: 8px; background: var(--red); border-radius: 50%;
+    animation: blink 1.4s ease infinite;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.15} }
+
+  .hero-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(46px, 5.5vw, 78px); line-height: 1.05;
+    color: var(--text-dark); margin-bottom: 18px;
+  }
+  .hero-title .red { color: var(--red); }
+  .hero-title .gold { color: var(--gold); }
+  .hero-title .wave { display: inline-block; animation: wave 2.2s ease infinite; }
+  @keyframes wave { 0%,100%{transform:rotate(0)} 25%{transform:rotate(-8deg)} 75%{transform:rotate(8deg)} }
+
+  .hero-sub {
+    font-size: 16px; font-weight: 600; line-height: 1.7;
+    color: var(--text-mid); margin-bottom: 14px; max-width: 460px;
+  }
+  .hero-sub strong { color: var(--text-dark); }
+
+  /* Host badge */
+  .host-badge {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: var(--black); color: var(--white);
+    font-family: 'Fredoka One', cursive; font-size: 14px;
+    padding: 10px 18px; border-radius: 100px; margin-bottom: 28px;
+  }
+  .host-badge .cam { font-size: 18px; }
+
+  .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; }
+
+  .btn-primary {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--red); color: var(--white);
+    font-family: 'Fredoka One', cursive; font-size: 16px;
+    padding: 14px 28px; border-radius: 100px;
+    border: none; cursor: pointer; text-decoration: none;
+    box-shadow: 0 6px 20px rgba(232,25,44,0.35);
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .btn-primary:hover { transform: translateY(-3px) scale(1.03); box-shadow: 0 10px 30px rgba(232,25,44,0.42); }
+
+  .btn-secondary {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--white); color: var(--text-dark);
+    font-family: 'Fredoka One', cursive; font-size: 16px;
+    padding: 14px 28px; border-radius: 100px; text-decoration: none;
+    border: 2.5px solid rgba(0,0,0,0.12); cursor: pointer;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+  .btn-secondary:hover { transform: translateY(-3px); border-color: var(--gold); }
+
+  /* Hero photo collage */
+  .hero-right { position: relative; height: 520px; }
+  .hero-photo {
+    position: absolute; border-radius: 24px; overflow: hidden;
+    box-shadow: 0 16px 48px rgba(0,0,0,0.18);
+    transition: transform 0.4s ease;
+  }
+  .hero-photo img { width:100%; height:100%; object-fit:cover; display:block; }
+  .hero-photo:nth-child(1) { width:230px; height:300px; top:0; left:20px; transform:rotate(-4deg); border:5px solid var(--white); }
+  .hero-photo:nth-child(2) { width:260px; height:320px; top:60px; right:0; transform:rotate(3deg); border:5px solid var(--white); }
+  .hero-photo:nth-child(3) { width:200px; height:220px; bottom:0; left:80px; transform:rotate(-2deg); border:5px solid var(--white); }
+  .hero-photo:hover { transform:rotate(0deg) scale(1.04) !important; z-index:10; }
+
+  .hero-sticker {
+    position: absolute; font-family: 'Fredoka One', cursive; font-size: 13px;
+    padding: 8px 14px; border-radius: 100px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.14); white-space: nowrap; z-index: 20;
+  }
+  .hero-sticker.s1 { top:18px; right:8px; transform:rotate(8deg); background:var(--gold); color:var(--black); }
+  .hero-sticker.s2 { bottom:90px; right:18px; transform:rotate(-5deg); background:var(--red); color:var(--white); }
+  .hero-sticker.s3 { bottom:18px; left:0; transform:rotate(3deg); background:var(--black); color:var(--white); }
+
+  /* Stats */
+  .stats-bar {
+    display: flex; justify-content: center; padding: 48px 56px 56px;
+    max-width: 1240px; margin: 0 auto;
+  }
+  .stat-item { flex:1; text-align:center; padding:28px 20px; position:relative; }
+  .stat-item + .stat-item::before {
+    content:''; position:absolute; left:0; top:20%; height:60%;
+    width:1.5px; background:rgba(0,0,0,0.08);
+  }
+  .stat-num { font-family:'Fredoka One',cursive; font-size:42px; color:var(--red); line-height:1; margin-bottom:6px; }
+  .stat-label { font-size:13px; font-weight:700; color:var(--text-mid); text-transform:uppercase; letter-spacing:1px; }
+
+  /* Category quick nav */
+  .home-cats-wrap { background: var(--white); padding: 60px 56px; }
+  .home-cats-label { font-family:'Fredoka One',cursive; font-size:36px; text-align:center; margin-bottom:8px; }
+  .home-cats-sub { text-align:center; font-size:16px; font-weight:600; color:var(--text-mid); margin-bottom:36px; }
+  .cats-grid {
+    display:grid; grid-template-columns:repeat(auto-fill,minmax(190px,1fr));
+    gap:16px; max-width:1240px; margin:0 auto;
+  }
+  .cat-card {
+    background:var(--cream); border-radius:20px; padding:28px 20px;
+    text-align:center; cursor:pointer; border:2.5px solid transparent;
+    transition:all 0.25s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  .cat-card:hover { border-color:var(--red); background:var(--white); transform:translateY(-6px); box-shadow:0 12px 32px rgba(232,25,44,0.12); }
+  .cat-card .cat-emoji { font-size:40px; margin-bottom:10px; display:block; }
+  .cat-card .cat-name { font-family:'Fredoka One',cursive; font-size:18px; color:var(--text-dark); margin-bottom:4px; }
+  .cat-card .cat-sub { font-size:12px; font-weight:700; color:var(--text-mid); }
+
+  /* ── MEET NE SECTION ── */
+  .meet-ne {
+    display: grid; grid-template-columns: 1fr 1fr;
+    background: var(--white);
+  }
+
+  .meet-ne-visual {
+    background: var(--black);
+    position: relative; overflow: hidden; min-height: 480px;
+  }
+  .meet-ne-visual img { width:100%; height:100%; object-fit:cover; opacity:0.75; display:block; }
+  .meet-ne-overlay {
+    position:absolute; inset:0;
+    background: linear-gradient(160deg, rgba(232,25,44,0.45) 0%, rgba(26,26,26,0.2) 100%);
+  }
+  .meet-ne-visual-text {
+    position:absolute; bottom:36px; left:36px; right:36px;
+  }
+  .meet-ne-visual-text h3 {
+    font-family:'Pacifico',cursive; font-size:48px; color:var(--white);
+    line-height:1.1; text-shadow:0 4px 20px rgba(0,0,0,0.4);
+    margin-bottom:12px;
+  }
+  .ig-pill {
+    display:inline-flex; align-items:center; gap:8px;
+    background:rgba(255,255,255,0.18); backdrop-filter:blur(8px);
+    border:1.5px solid rgba(255,255,255,0.35);
+    color:var(--white); font-family:'Fredoka One',cursive; font-size:14px;
+    padding:10px 18px; border-radius:100px; text-decoration:none;
+    transition:background 0.2s;
+  }
+  .ig-pill:hover { background:rgba(255,255,255,0.3); }
+
+  .meet-ne-content {
+    padding: 60px 52px;
+    display:flex; flex-direction:column; justify-content:center;
+    background: var(--red);
+  }
+  .meet-tag { font-family:'Fredoka One',cursive; font-size:12px; letter-spacing:2px; text-transform:uppercase; color:var(--gold-light); margin-bottom:16px; }
+  .meet-heading { font-family:'Fredoka One',cursive; font-size:clamp(30px,3vw,42px); color:var(--white); line-height:1.2; margin-bottom:18px; }
+  .meet-body { font-size:15px; font-weight:600; line-height:1.75; color:rgba(255,255,255,0.88); margin-bottom:12px; }
+
+  /* Credentials chips */
+  .creds { display:flex; gap:10px; flex-wrap:wrap; margin:20px 0 28px; }
+  .cred-chip {
+    display:inline-flex; align-items:center; gap:6px;
+    background:rgba(255,255,255,0.15); border:1.5px solid rgba(255,255,255,0.3);
+    color:var(--white); font-family:'Fredoka One',cursive; font-size:13px;
+    padding:8px 16px; border-radius:100px;
+  }
+
+  .social-row { display:flex; gap:10px; flex-wrap:wrap; }
+  .social-pill {
+    display:inline-flex; align-items:center; gap:6px;
+    background:rgba(255,255,255,0.15); color:var(--white);
+    font-family:'Fredoka One',cursive; font-size:14px;
+    padding:11px 20px; border-radius:100px; text-decoration:none;
+    border:1.5px solid rgba(255,255,255,0.3); transition:background 0.2s;
+  }
+  .social-pill:hover { background:rgba(255,255,255,0.28); }
+
+  /* ── LATEST DROP banner ── */
+  .latest-drop {
+    background: var(--gold); padding: 20px 56px;
+    display:flex; align-items:center; gap:20px; justify-content:center;
+  }
+  .latest-drop-label { font-family:'Fredoka One',cursive; font-size:13px; letter-spacing:2px; text-transform:uppercase; color:var(--black); opacity:0.6; }
+  .latest-drop-text { font-family:'Fredoka One',cursive; font-size:22px; color:var(--black); }
+  .latest-drop-btn {
+    display:inline-flex; align-items:center; gap:6px;
+    background:var(--black); color:var(--white);
+    font-family:'Fredoka One',cursive; font-size:13px;
+    padding:10px 20px; border-radius:100px; text-decoration:none;
+    border:none; cursor:pointer; transition:transform 0.2s;
+  }
+  .latest-drop-btn:hover { transform:scale(1.05); }
+
+  /* ══════════════════════
+     CATEGORY SECTIONS
+  ══════════════════════ */
+  .cat-section { background: var(--cream); padding-bottom: 80px; }
+
+  .cat-hero {
+    position:relative; height:320px; overflow:hidden;
+    display:flex; align-items:flex-end;
+  }
+  .cat-hero img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; filter:brightness(0.52); }
+  .cat-hero-overlay { position:absolute; inset:0; background:linear-gradient(to top, rgba(0,0,0,0.78) 0%, transparent 65%); }
+  .cat-hero-content { position:relative; z-index:2; padding:40px 56px; width:100%; }
+  .cat-hero-emoji { font-size:52px; margin-bottom:8px; display:block; animation:bounceIn 0.5s cubic-bezier(0.34,1.56,0.64,1); }
+  @keyframes bounceIn { from{transform:scale(0.4) rotate(-12deg)} to{transform:scale(1) rotate(0)} }
+  .cat-hero-title { font-family:'Fredoka One',cursive; font-size:clamp(40px,6vw,72px); color:var(--white); line-height:1; margin-bottom:8px; }
+  .cat-hero-title span { color:var(--gold-light); }
+  .cat-hero-desc { font-size:16px; font-weight:600; color:rgba(255,255,255,0.8); }
+
+  /* Filter pills */
+  .filter-row {
+    display:flex; gap:10px; padding:26px 56px;
+    overflow-x:auto; scrollbar-width:none;
+    background:var(--white); border-bottom:1px solid rgba(0,0,0,0.06);
+  }
+  .filter-row::-webkit-scrollbar { display:none; }
+  .filter-pill {
+    display:inline-flex; align-items:center; gap:6px;
+    padding:9px 18px; border-radius:100px; border:2px solid rgba(0,0,0,0.1);
+    background:transparent; font-family:'Nunito',sans-serif;
+    font-size:13px; font-weight:800; color:var(--text-mid);
+    cursor:pointer; white-space:nowrap; transition:all 0.2s;
+  }
+  .filter-pill.on, .filter-pill:hover { background:var(--gold-light); border-color:var(--gold); color:var(--black); }
+
+  /* Ne intro bubble */
+  .cat-intro {
+    max-width:1300px; margin:0 auto;
+    padding:32px 56px 0;
+    display:flex; gap:14px; align-items:flex-start;
+  }
+  .ne-avatar {
+    width:52px; height:52px;
+    background:linear-gradient(135deg, var(--red), var(--gold));
+    border-radius:50%; display:flex; align-items:center; justify-content:center;
+    font-size:24px; flex-shrink:0;
+    box-shadow:0 4px 14px rgba(232,25,44,0.25);
+  }
+  .ne-bubble {
+    background:var(--white); border-radius:0 20px 20px 20px;
+    padding:16px 22px; font-size:15px; font-weight:700;
+    color:var(--text-dark); line-height:1.65;
+    box-shadow:0 4px 16px rgba(0,0,0,0.06); position:relative;
+  }
+  .ne-bubble::before {
+    content:''; position:absolute; left:-10px; top:0;
+    border-right:10px solid var(--white); border-bottom:12px solid transparent;
+  }
+  .ne-bubble .ne-name { color:var(--red); font-family:'Fredoka One',cursive; }
+
+  /* Restaurant grid */
+  .restaurants-grid {
+    display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+    gap:24px; padding:36px 56px;
+    max-width:1300px; margin:0 auto;
+  }
+
+  .resto-card {
+    background:var(--white); border-radius:24px; overflow:hidden;
+    box-shadow:0 4px 24px rgba(0,0,0,0.07);
+    transition:transform 0.3s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.3s;
+    cursor:pointer;
+  }
+  .resto-card:hover { transform:translateY(-8px); box-shadow:0 20px 48px rgba(0,0,0,0.13); }
+
+  .resto-img { height:210px; overflow:hidden; position:relative; }
+  .resto-img img { width:100%; height:100%; object-fit:cover; transition:transform 0.5s ease; }
+  .resto-card:hover .resto-img img { transform:scale(1.07); }
+
+  .resto-badge {
+    position:absolute; top:14px; left:14px;
+    background:var(--white); font-family:'Fredoka One',cursive;
+    font-size:12px; color:var(--red); padding:5px 12px;
+    border-radius:100px; box-shadow:0 2px 10px rgba(0,0,0,0.12);
+  }
+  .resto-save {
+    position:absolute; top:14px; right:14px;
+    width:36px; height:36px; background:var(--white);
+    border-radius:50%; display:flex; align-items:center; justify-content:center;
+    font-size:17px; box-shadow:0 2px 10px rgba(0,0,0,0.12);
+  }
+
+  .resto-body { padding:22px; }
+  .resto-name { font-family:'Fredoka One',cursive; font-size:22px; color:var(--text-dark); margin-bottom:4px; }
+  .resto-loc { display:flex; align-items:center; gap:5px; font-size:13px; font-weight:700; color:var(--red); margin-bottom:12px; }
+  .resto-desc { font-size:14px; font-weight:600; line-height:1.65; color:var(--text-mid); margin-bottom:14px; }
+  .resto-tags { display:flex; gap:7px; flex-wrap:wrap; margin-bottom:14px; }
+  .tag { font-family:'Nunito',sans-serif; font-size:11px; font-weight:800; padding:5px 12px; border-radius:100px; background:var(--gray); color:var(--text-mid); }
+
+  .ne-take {
+    background:linear-gradient(135deg,#FFF0F2,#FFF8F0);
+    border-left:4px solid var(--red); border-radius:0 14px 14px 0;
+    padding:13px 15px; font-size:13px; font-weight:700;
+    color:var(--text-dark); line-height:1.55;
+  }
+  .ne-take::before { content:'🎤 Trene\'s Take: '; color:var(--red); font-family:'Fredoka One',cursive; font-size:13px; }
+
+  /* ── FOOTER ── */
+  footer { background:var(--black); padding:56px 56px 36px; color:var(--white); }
+  .footer-top { display:grid; grid-template-columns:1.2fr 1fr 1fr; gap:48px; margin-bottom:40px; }
+  .footer-brand .logo { font-family:'Pacifico',cursive; font-size:30px; color:var(--white); margin-bottom:12px; }
+  .footer-brand .logo span { color:var(--red); }
+  .footer-brand p { font-size:14px; font-weight:600; color:rgba(255,255,255,0.48); line-height:1.65; margin-bottom:18px; }
+  .footer-email {
+    display:inline-flex; align-items:center; gap:8px;
+    background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.15);
+    color:rgba(255,255,255,0.7); font-family:'Fredoka One',cursive; font-size:13px;
+    padding:10px 18px; border-radius:100px; text-decoration:none;
+    transition:background 0.2s;
+  }
+  .footer-email:hover { background:rgba(255,255,255,0.16); color:var(--white); }
+  .footer-col h4 { font-family:'Fredoka One',cursive; font-size:18px; color:var(--gold); margin-bottom:16px; }
+  .footer-col ul { list-style:none; }
+  .footer-col ul li { margin-bottom:10px; }
+  .footer-col ul li button {
+    background:none; border:none; cursor:pointer;
+    font-family:'Nunito',sans-serif; font-size:14px; font-weight:700;
+    color:rgba(255,255,255,0.5); transition:color 0.2s; text-align:left;
+  }
+  .footer-col ul li button:hover { color:var(--white); }
+  .footer-col ul li a { font-size:14px; font-weight:700; color:rgba(255,255,255,0.5); text-decoration:none; transition:color 0.2s; }
+  .footer-col ul li a:hover { color:var(--white); }
+  .footer-bottom {
+    border-top:1px solid rgba(255,255,255,0.1); padding-top:24px;
+    display:flex; justify-content:space-between; align-items:center;
+  }
+  .footer-bottom p { font-family:'Fredoka One',cursive; font-size:13px; color:rgba(255,255,255,0.28); }
+
+  /* RESPONSIVE */
+  @media(max-width:900px) {
+    .hero { grid-template-columns:1fr; padding:40px 24px 0; gap:36px; }
+    .hero-right { height:300px; }
+    .hero-photo:nth-child(1){width:140px;height:185px}
+    .hero-photo:nth-child(2){width:155px;height:200px}
+    .hero-photo:nth-child(3){width:130px;height:155px}
+    .stats-bar{padding:24px}
+    .stat-num{font-size:32px}
+    .home-cats-wrap{padding:40px 24px}
+    .meet-ne{grid-template-columns:1fr}
+    .meet-ne-visual{min-height:240px}
+    .meet-ne-content{padding:40px 28px}
+    .latest-drop{padding:18px 24px;flex-direction:column;text-align:center;gap:12px}
+    .cat-hero-content{padding:28px 24px}
+    .filter-row{padding:20px 24px}
+    .cat-intro{padding:24px 24px 0}
+    .restaurants-grid{padding:24px;grid-template-columns:1fr}
+    footer{padding:40px 24px 28px}
+    .footer-top{grid-template-columns:1fr;gap:28px}
+    .footer-bottom{flex-direction:column;gap:12px;text-align:center}
+    nav{padding:0 16px}
+    .nav-tabs li button{padding:7px 10px;font-size:11px}
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor-dot" id="cDot"></div>
+<div class="cursor-blob" id="cBlob"></div>
+
+<!-- TICKER -->
+<div class="ticker-wrap">
+  <div class="ticker">
+    <span class="ticker-item">🍔🍕🌮🥡🥢 Eats With Ne <span class="star">✦</span></span>
+    <span class="ticker-item">📍 Los Angeles Based Food Creator <span class="star">✦</span></span>
+    <span class="ticker-item">🎤 On-Camera Host <span class="star">✦</span></span>
+    <span class="ticker-item">🌟 Building Community Through Food <span class="star">✦</span></span>
+    <span class="ticker-item">😍 No gatekeeping here!! <span class="star">✦</span></span>
+    <span class="ticker-item">🔥 New spots every week <span class="star">✦</span></span>
+    <span class="ticker-item">💛 Food is how we connect <span class="star">✦</span></span>
+    <span class="ticker-item">🍔🍕🌮🥡🥢 Eats With Ne <span class="star">✦</span></span>
+    <span class="ticker-item">📍 Los Angeles Based Food Creator <span class="star">✦</span></span>
+    <span class="ticker-item">🎤 On-Camera Host <span class="star">✦</span></span>
+    <span class="ticker-item">🌟 Building Community Through Food <span class="star">✦</span></span>
+    <span class="ticker-item">😍 No gatekeeping here!! <span class="star">✦</span></span>
+    <span class="ticker-item">🔥 New spots every week <span class="star">✦</span></span>
+    <span class="ticker-item">💛 Food is how we connect <span class="star">✦</span></span>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#">🍴 Eats With Ne</a>
+  <ul class="nav-tabs" id="navTabs">
+    <li><button class="active" data-section="home">🏠 Home</button></li>
+    <li><button data-section="mexican">🌮 Mexican</button></li>
+    <li><button data-section="burgers">🍔 Smash Burgers</button></li>
+    <li><button data-section="brunch">🥂 Brunch</button></li>
+    <li><button data-section="asian">🍜 Asian Eats</button></li>
+    <li><button data-section="italian">🍝 Italian</button></li>
+    <li><button data-section="blackowned">✊🏾 Black Owned</button></li>
+    <li><button data-section="seafood">🦞 Seafood Boil</button></li>
+    <li><button data-section="dessert">🍰 Dessert</button></li>
+  </ul>
+</nav>
+
+<!-- ═══════════ HOME ═══════════ -->
+<section id="home" class="visible">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-left">
+      <div class="hero-badge"><div class="blink"></div> 📍 Los Angeles, CA</div>
+      <h1 class="hero-title">
+        Hey, I'm <span class="red">Trene</span> —<br>
+        but everyone calls<br>
+        me <span class="gold">Ne</span>! <span class="wave">👋🏾</span>
+      </h1>
+      <p class="hero-sub">
+        I'm a <strong>Los Angeles food content creator & on-camera host</strong> building community through food. I pull up to spots all over LA so you always know where to go and what to order. Welcome to my table! 🍽️
+      </p>
+      <div class="host-badge"><span class="cam">🎤</span> On-Camera Host · Food Content Creator · LA Native</div>
+      <div class="hero-actions">
+        <button class="btn-primary" onclick="showSection('mexican')">🗺️ Find Your Next Spot</button>
+        <button class="btn-secondary" onclick="document.getElementById('meetne').scrollIntoView({behavior:'smooth'})">✨ About Ne</button>
+      </div>
+    </div>
+    <div class="hero-right">
+      <div class="hero-photo"><img src="https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=500&q=80" alt="Mexican food"></div>
+      <div class="hero-photo"><img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=500&q=80" alt="Burger"></div>
+      <div class="hero-photo"><img src="https://images.unsplash.com/photo-1551024601-bec78aea704b?w=500&q=80" alt="Dessert"></div>
+      <div class="hero-sticker s1">🔥 Ne-approved!!</div>
+      <div class="hero-sticker s2">📸 Must visit!</div>
+      <div class="hero-sticker s3">✨ No gatekeeping</div>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-bar">
+    <div class="stat-item"><div class="stat-num">12K+</div><div class="stat-label">Community Members</div></div>
+    <div class="stat-item"><div class="stat-num">248</div><div class="stat-label">Posts & Reviews</div></div>
+    <div class="stat-item"><div class="stat-num">8</div><div class="stat-label">Food Categories</div></div>
+    <div class="stat-item"><div class="stat-num">∞</div><div class="stat-label">Good Eats Ahead</div></div>
+  </div>
+
+  <!-- CATEGORY QUICK NAV -->
+  <div class="home-cats-wrap">
+    <h2 class="home-cats-label">What's the vibe today? 👀</h2>
+    <p class="home-cats-sub">Tap any category to find Trene-approved spots across LA</p>
+    <div class="cats-grid">
+      <div class="cat-card" onclick="showSection('mexican')"><span class="cat-emoji">🌮</span><div class="cat-name">Mexican</div><div class="cat-sub">Tacos · Birria · Pozole</div></div>
+      <div class="cat-card" onclick="showSection('burgers')"><span class="cat-emoji">🍔</span><div class="cat-name">Smash Burgers</div><div class="cat-sub">Crispy · Melty · Saucy</div></div>
+      <div class="cat-card" onclick="showSection('brunch')"><span class="cat-emoji">🥂</span><div class="cat-name">Brunch</div><div class="cat-sub">Mimosas · Cute spots</div></div>
+      <div class="cat-card" onclick="showSection('asian')"><span class="cat-emoji">🍜</span><div class="cat-name">Asian Eats</div><div class="cat-sub">KBBQ · Ramen · Dim Sum</div></div>
+      <div class="cat-card" onclick="showSection('italian')"><span class="cat-emoji">🍝</span><div class="cat-name">Italian</div><div class="cat-sub">Pasta · Pizza · Wine</div></div>
+      <div class="cat-card" onclick="showSection('blackowned')"><span class="cat-emoji">✊🏾</span><div class="cat-name">Black Owned</div><div class="cat-sub">Soul · Caribbean · New American</div></div>
+      <div class="cat-card" onclick="showSection('seafood')"><span class="cat-emoji">🦞</span><div class="cat-name">Seafood Boil</div><div class="cat-sub">Crab · Cajun · Butter</div></div>
+      <div class="cat-card" onclick="showSection('dessert')"><span class="cat-emoji">🍰</span><div class="cat-name">Dessert</div><div class="cat-sub">Ice cream · Cookies · Boba</div></div>
+    </div>
+  </div>
+
+  <!-- LATEST DROP -->
+  <div class="latest-drop">
+    <div class="latest-drop-label">🔥 Latest Drop</div>
+    <div class="latest-drop-text">Ne just reviewed the new seafood boil spot in Inglewood — and it's a MUST!</div>
+    <button class="latest-drop-btn" onclick="showSection('seafood')">See the review →</button>
+  </div>
+
+  <!-- MEET NE -->
+  <div class="meet-ne" id="meetne">
+    <div class="meet-ne-visual">
+      <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=700&q=80" alt="Food vibes">
+      <div class="meet-ne-overlay"></div>
+      <div class="meet-ne-visual-text">
+        <h3>Food.<br>Community.<br>Always.</h3>
+        <a href="https://www.instagram.com/eatswithne/" target="_blank" class="ig-pill">📸 @eatswithne</a>
+      </div>
+    </div>
+    <div class="meet-ne-content">
+      <div class="meet-tag">✦ Meet The Creator</div>
+      <h2 class="meet-heading">Hey it's Trene — your LA food bestie & on-camera host! 🎤🍽️</h2>
+      <p class="meet-body">
+        I'm a Los Angeles-based food content creator and on-camera host on a mission to build community through food. No gatekeeping, no fluff — just real reviews, real spots, and real talk about what's worth your time and money in LA.
+      </p>
+      <p class="meet-body">
+        Whether it's a $10 taco truck or a $100 dinner, if it's good, I'm putting you on. With 12K+ community members and 248 posts, this is just the beginning! 💛
+      </p>
+      <div class="creds">
+        <div class="cred-chip">🎤 On-Camera Host</div>
+        <div class="cred-chip">📍 LA Based</div>
+        <div class="cred-chip">🌟 12K Community</div>
+        <div class="cred-chip">🍽️ 248 Reviews</div>
+      </div>
+      <div class="social-row">
+        <a href="https://www.instagram.com/eatswithne/" target="_blank" class="social-pill">📸 Instagram</a>
+        <a href="#" class="social-pill">🎵 TikTok</a>
+        <a href="#" class="social-pill">▶️ YouTube</a>
+        <a href="mailto:trendyera.com@gmail.com" class="social-pill">✉️ Collabs</a>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<!-- ═══════════ MEXICAN ═══════════ -->
+<section id="mexican" class="cat-section">
+  <div class="cat-hero">
+    <img src="https://images.unsplash.com/photo-1565299585323-38d6b0865b47?w=1400&q=80" alt="Mexican food">
+    <div class="cat-hero-overlay"></div>
+    <div class="cat-hero-content">
+      <span class="cat-hero-emoji">🌮</span>
+      <h2 class="cat-hero-title">Mexican <span>Food</span></h2>
+      <p class="cat-hero-desc">LA's Mexican food scene is unmatched. Period. 🔥</p>
+    </div>
+  </div>
+  <div class="filter-row">
+    <button class="filter-pill on">🌮 All</button>
+    <button class="filter-pill">🥩 Tacos</button>
+    <button class="filter-pill">🍲 Birria</button>
+    <button class="filter-pill">🫔 Burritos</button>
+    <button class="filter-pill">🍹 Margaritas</button>
+    <button class="filter-pill">⭐ Ne's Faves</button>
+  </div>
+  <div class="cat-intro">
+    <div class="ne-avatar">😋</div>
+    <div class="ne-bubble"><span class="ne-name">Ne says:</span> I could eat tacos every single day and literally never get bored. LA Mexican food is a whole universe and these are the spots I keep going back to — trust me on every single one!! 🌮✨</div>
+  </div>
+  <div class="restaurants-grid">
+    <div class="resto-card">
+      <div class="resto-img">
+        <img src="https://images.unsplash.com/photo-1624300629298-e9de39c13be5?w=600&q=80" alt="Tacos">
+        <div class="resto-badge">🌟 Must Try</div><div class="resto-save">❤️</div>
+      </div>
+      <div class="resto-body">
+        <div class="resto-name">Sonoratown</div>
+        <div class="resto-loc">📍 Downtown LA</div>
+        <p class="resto-desc">Paper-thin flour tortillas that genuinely change your life. The carne asada tacos here set a standard nothing else can touch.</p>
+        <div class="resto-tags"><span class="tag">Casual</span><span class="tag">Street Food</span><span class="tag">Flour Tortillas</span></div>
+        <div class="ne-take">These flour tortillas had me questioning my whole existence. Get the carne asada and do NOT skip the cheese crisps!!</div>
+      </div>
+    </div>
+    <div class="resto-card">
+      <div class="resto-img">
+        <img src="https://images.unsplash.com/photo-1551504734-5ee1c4a1479b?w=600&q=80" alt="Birria">
+        <div class="resto-badge">🔥 Viral</div><div class="resto-save">🔥</div>
+      </div>
+      <div class="resto-body">
+        <div class="resto-name">Birrieria Nochistlan</div>
+        <div class="resto-loc">📍 South LA</div>
+        <p class="resto-desc">Generations of birria tradition in every bowl. The consommé will genuinely make you emotional — it's that serious of a dish.</p>
+        <div class="resto-tags"><span class="tag">Family Owned</span><span class="tag">Weekend Only</span><span class="tag">Birria</span></div>
+        <div class="ne-take">I drove 45 minutes for this and would do it every single weekend. Cash only, get there EARLY!! Don't say I didn't warn you 😅</div>
+      </div>
+    </div>
+    <div class="resto-card">
+      <div class="resto-img">
+        <img src="https://images.unsplash.com/photo-1513456852971-30c0b8199d4d?w=600&q=80" alt="Oaxacan">
+        <div class="resto-badge">✨ Elevated</div><div class="resto-save">😍</div>
+      </div>
+      <div class="resto-body">
+        <div class="resto-name">Guelaguetza</div>
+        <div class="resto-loc">📍 Koreatown</div>
+        <p class="resto-desc">Oaxacan cuisine that feels like a full cultural experience. The mole negro alone is worth making a reservation for — incredible.</p>
+        <div class="resto-tags"><span class="tag">Date Night</span><span class="tag">Full Bar</span><span class="tag">Oaxacan</span></div>
+        <div class="ne-take">Get the tlayuda, the mole negro, and a mezcal cocktail. One of my all-time top meals in LA — this one is SPECIAL!! 🤌🏾</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ SMASH BURGERS ═══════════ -->
+<section id="burgers" class="cat-section">
+  <div class="cat-hero">
+    <img src="https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=1400&q=80" alt="Smash burger">
+    <div class="cat-hero-overlay"></div>
+    <div class="cat-hero-content">
+      <span class="cat-hero-emoji">🍔</span>
+      <h2 class="cat-hero-title">Smash <span>Burgers</span></h2>
+      <p class="cat-hero-desc">That crispy lace edge tho... you already know 🤤</p>
+    </div>
+  </div>
+  <div class="filter-row">
+    <button class="filter-pill on">🍔 All</button>
+    <button class="filter-pill">🧀 Double Smash</button>
+    <button class="filter-pill">🌶️ Spicy</button>
+    <button class="filter-pill">🌙 Late Night</button>
+    <button class="filter-pill">⭐ Ne's Faves</button>
+  </div>
+  <div class="cat-intro">
+    <div class="ne-avatar">🍔</div>
+    <div class="ne-bubble"><span class="ne-name">Ne says:</span> A good smash burger is literally EVERYTHING — crispy caramelized edges, melty cheese, soft bun. LA is so underrated for smash burgers and I have done the extensive research so you don't have to!! 🙌🏾</div>
+  </div>
+  <div class="restaurants-grid">
+    <div class="resto-card">
+      <div class="resto-img">
+        <img src="https://images.unsplash.com/photo-1550547660-d9450f859349?w=600&q=80" alt="Burgerlords">
+        <div class="resto-badge">🏆 #1 Pick</div><div class="resto-save">💛</div>
+      </div>
+      <div class="resto-body">
+        <div class="resto-name">Burgerlords</div>
+        <div class="resto-loc">📍 Chinatown & Highland Park</div>
+        <p class="resto-desc">Smash burgers with serious LA personality. The double smash with secret sauce hits every single time, no matter which location you hit up.</p>
+        <div class="resto-tags"><span class="tag">Cult Favorite</span><span class="tag">Casual</span><span class="tag">IYKYK</span></div>
+        <div class="ne-take">Add the fries, add the sauce, don't ask questions. This place has SUCH a vibe and I love it every time!! 10/10 🍟</div>
+      </div>
+    </div>
+    <div class="resto-card">
+      <div class="resto-img">
+        <img src="https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=600&q=80" alt="Irv's Burgers">
+        <div class="resto-badge">🏛️ Historic</div><div class="resto-save">❤️</div>
+      </div>
+      <div class="resto-body">
+        <div class="resto-name">Irv's Burgers</div>
+        <div class="resto-loc">📍 West Hollywood</div>
+        <p class="resto-desc">A WeHo institution since 1946 that still hits different. The smash-style patties and iconic hand-drawn wrappers are pure Los Angeles character.</p>
+        <div class="resto-tags"><span class="tag">Historic</span><span class="tag">Iconic</span><span class="tag">LA Staple</span></div>
+        <div class="ne-take">This place has SO much history and the burger still absolutely slaps. Classic LA energy — feels like you're part of something! 🖤</div>
+      </div>
+    </div>
+    <div class="resto-card">
+      <div class="resto-img">
+        <img src="https://images.unsplash.com/photo-1586816001966-79b736744398?w=600&q=80" alt="Burger">
+        <div class="resto-badge">🌙 Late Night</div><div class="resto-save">🔥</div>
+      </div>
+      <div class="resto-body">
+        <div class="resto-name">101 Burger</div>
+        <div class="resto-loc">📍 Hollywood</div>
+        <p class="resto-desc">No-frills, maximum flavor. Thin crispy smash patties with caramelized onions make this the perfect quick-hit anytime of day or night.</p>
+        <div class="resto-tags"><span class="tag">Late Night</span><span class="tag">Quick</span><span class="tag">Value</span></div>
+        <div class="ne-take">Perfect 2am after-going-out situation!! Fast, affordable, and genuinely GOOD. Keep this one locked in your phone!! 📱</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ BRUNCH ═══════════ -->
+<section id="brunch" class="cat-section">
+  <div class="cat-hero">
+    <img src="https://images.unsplash.com/photo-1504754524776-8f4f37790ca0?w=1400&q=80" alt="Brunch">
+    <div class="cat-hero-overlay"></div>
+    <div class="cat-hero-content">
+      <span class="cat-hero-emoji">🥂</span>
+      <h2 class="cat-hero-title">Brunch <span>Spots</span></h2>
+      <p class="cat-hero-desc">Sunday is a whole lifestyle and these spots understand the assignment 💅🏾</p>
+    </div>
+  </div>
+  <div class="filter-row">
+    <button class="filter-pill on">🥂 All</button>
+    <button class="filter-pill">🍊 Bottomless Mimosas</button>
+    <button class="filter-pill">📸 Aesthetic</button>
+    <button class="filter-pill">🥞 Sweet</button>
+    <button class="filter-pill">🥚 Savory</button>
+    <button class="filter-pill">⭐ Ne's Faves</button>
+  </div>
+  <div class="cat-intro">
+    <div class="ne-avatar">🥂</div>
+    <div class="ne-bubble"><span class="ne-name">Ne says:</span> Brunch in LA is literally a whole personality and I am FULLY that person. Good eggs, great vibes, and ideally a mimosa — these spots deliver on all three!! 💅🏾✨</div>
+  </div>
+  <div class="restaurants-grid">
+    <div class="resto-card">
+      <div class="resto-img">
+        <img src="https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?w=600&q=80" alt="Republique">
+        <div class="resto-badge">✨ Upscale</div><div class="resto-save">😍</div>
+      </div>
+      <div class="resto-body">
+        <div class="resto-name">Republique</div>
+        <div class="resto-loc">📍 Mid-City</div>
+        <p class="resto-desc">Weekend brunch inside a jaw-dropping 1929 space — perfect croissants, ricotta pancakes, and cortados that get your whole day right.</p>
+        <div class="resto-tags"><span class="tag">Upscale</span><span class="tag">Bakery</span><span class="tag">Gorgeous Space</span></div>
+        <div class="ne-take">Get the morning bun and a window table. This is the one you bring someone special — absolutely stunning space and the food matches!! 🤌🏾</div>
+      </div>
+    </div>
+    <div class="resto-card">
+      <div class="resto-img">
+        <img src="https://images.unsplash.com/photo-1484723091739-30a097e8f929?w=600&q=80" alt="Eggslut">
+        <div class="resto-badge">📸 Gram-worthy</div><div class="resto-save">❤️</div>
+      </div>
+      <div class="resto-body">
+        <div class="resto-name">Eggslut</div>
+        <div class="resto-loc">📍 Grand Central Market, DTLA</div>
+        <p class="resto-desc">The Slut — a coddled egg over silky potato purée in a glass jar — is still one of the most iconic things you can eat in Los Angeles.</p>
+        <div class="resto-tags"><span class="tag">Iconic</span><span class="tag">Worth the Wait</span><span class="tag">Photogenic</span></div>
+        <div class="ne-take">Go on a weekday!! Order The Slut AND the Fairfax sandwich. You are so welcome in advance — this one lives in my head rent free 😩</div>
+      </div>
+    </div>
+    <div class="resto-card">
+      <div class="resto-img">
+        <img src="https://images.unsplash.com/photo-1525351484163-7529414344d8?w=600&q=80" alt="Sqirl">
+        <div class="resto-badge">🌿 Fresh</div><div class="resto-save">💛</div>
+      </div>
+      <div class="resto-body">
+        <div class="resto-name">Sqirl</div>
+        <div class="resto-loc">📍 Silver Lake</div>
+        <p class="resto-desc">The ricotta toast with sorrel pesto is genuinely one of the most thoughtful things on any brunch menu in LA. Bright, fresh, full of character.</p>
+        <div class="resto-tags"><span class="tag">Silver Lake Staple</span><span class="tag">Vegetarian Friendly</span></div>
+        <div class="ne-take">I know ricotta toast sounds basic but this one is NOT. Get the house-made jam toast too — those jams are absolutely insane!! 🍓</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ ASIAN EATS ═══════════ -->
+<section id="asian" class="cat-section">
+  <div class="cat-hero">
+    <img src="https://images.unsplash.com/photo-1569050467447-ce54b3bbc37d?w=1400&q=80" alt="Asian food">
+    <div class="cat-hero-overlay"></div>
+    <div class="cat-hero-content">
+      <span class="cat-hero-emoji">🍜</span>
+      <h2 class="cat-hero-title">Asian <span>Eats</span></h2>
+      <p class="cat-hero-desc">LA has one of the best Asian food scenes on the PLANET 🙌🏾</p>
+    </div>
+  </div>
+  <div class="filter-row">
+    <button class="filter-pill on">🍜 All</button>
+    <button class="filter-pill">🍖 KBBQ</button>
+    <button class="filter-pill">🍱 Ramen</button>
+    <button class="filter-pill">🥟 Dim Sum</button>
+    <button class="filter-pill">🍣 Sushi</button>
+    <button class="filter-pill">⭐ Ne's Faves</button>
+  </div>
+  <div class="cat-intro">
+    <div class="ne-avatar">🍜</div>
+    <div class="ne-bubble"><span class="ne-name">Ne says:</span> If you are NOT taking advantage of LA's Asian food scene you are genuinely missing some of the best food on earth. KBBQ, SGV dim sum, Little Tokyo ramen — we are SO blessed to live here!! 🙏🏾</div>
+  </div>
+  <div class="restaurants-grid">
+    <div class="resto-card">
+      <div class="resto-img">
+        <img src="https://images.unsplash.com/photo-1557872943-16a5ac26437e?w=600&q=80" alt="Ramen">
+        <div class="resto-badge">🍜 Slurp Worthy</div><div class="resto-save">❤️</div>
+      </div>
+      <div class="resto-body">
+        <div class="resto-name">Daikokuya</div>
+        <div class="resto-loc">📍 Little Tokyo</div>
+        <p class="resto-desc">A Little Tokyo legend with a devoted following. The tonkotsu broth is rich, cloudy, and absolutely perfect — a proper pilgrimage every time.</p>
+        <div class="resto-tags"><span class="tag">Ramen</span><span class="tag">Japanese</span><span class="tag">Classic</span></div>
+        <div class="ne-take">Add the soft boiled egg and gyoza on the side. The line moves fast and I promise on my life it is worth every second!! 🍥</div>
+      </div>
+    </div>
+    <div class="resto-card">
+      <div class="resto-img">
+        <img src="https://images.unsplash.com/photo-1617093727343-374698b1b08d?w=600&q=80" alt="KBBQ">
+        <div class="resto-badge">🔥 Fire Table</div><div class="resto-save">🔥</div>
+      </div>
+      <div class="resto-body">
+        <div class="resto-name">Park's BBQ</div>
+        <div class="resto-loc">📍 Koreatown</div>
+        <p class="resto-desc">The gold standard of Korean BBQ in LA. Prime short rib and marbled ribeye cooked right at your table — this is a full experience, not just dinner.</p>
+        <div class="resto-tags"><span class="tag">KBBQ</span><span class="tag">Upscale</span><span class="tag">Date Night</span></div>
+        <div class="ne-take">Make a reservation, wear something you're OK smelling like smoke, and COME HUNGRY. The quality here is absolutely unreal!! 🥩</div>
+      </div>
+    </div>
+    <div class="resto-card">
+      <div class="resto-img">
+        <img src="https://images.unsplash.com/photo-1563245372-f21724e3856d?w=600&q=80" alt="Dim Sum">
+        <div class="resto-badge">🥟 Weekend Only</div><div class="resto-save">😍</div>
+      </div>
+      <div class="resto-body">
+        <div class="resto-name">Sea Harbour</div>
+        <div class="resto-loc">📍 Rosemead / SGV</div>
+        <p class="resto-desc">SGV's finest dim sum — the har gow, XO turnip cake, and taro dumplings will ruin all other dim sum for you forever. Worth the drive every time.</p>
+        <div class="resto-tags"><span class="tag">Dim Sum</span><span class="tag">Cantonese</span><span class="tag">Weekend Brunch</span></div>
+        <div class="ne-take">Bring a group so you can order everything!! Shrimp dumplings and egg tarts are non-negotiable. SO good — I cannot stress this enough! 🫶🏾</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ ITALIAN ═══════════ -->
+<section id="italian" class="cat-section">
+  <div class="cat-hero">
+    <img src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=1400&q=80" alt="Italian food">
+    <div class="cat-hero-overlay"></div>
+    <div class="cat-hero-content">
+      <span class="cat-hero-emoji">🍝</span>
+      <h2 class="cat-hero-title">Italian <span>Food</span></h2>
+      <p class="cat-hero-desc">Handmade pasta, wood-fired pizza & a great glass of wine 🍷</p>
+    </div>
+  </div>
+  <div class="filter-row">
+    <button class="filter-pill on">🍝 All</button>
+    <button class="filter-pill">🍕 Pizza</button>
+    <button class="filter-pill">🍝 Pasta</button>
+    <button class="filter-pill">🍷 Wine Bar</button>
+    <button class="filter-pill">💑 Date Night</button>
+    <button class="filter-pill">⭐ Ne's Faves</button>
+  </div>
+  <div class="cat-intro">
+    <div class="ne-avatar">🍝</div>
+    <div class="ne-bubble"><span class="ne-name">Ne says:</span> LA's Italian scene is lowkey incredible and people sleep on it!! Handmade pasta, incredible wood-fired pizzas, gorgeous spaces... perfect for a date night or just treating your own self!! 🍷✨</div>
+  </div>
+  <div class="restaurants-grid">
+    <div class="resto-card">
+      <div class="resto-img">
+        <img src="https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=600&q=80" alt="Felix pasta">
+        <div class="resto-badge">🌟 Top Pick</div><div class="resto-save">❤️</div>
+      </div>
+      <div class="resto-body">
+        <div class="resto-name">Felix Trattoria</div>
+        <div class="resto-loc">📍 Venice</div>
+        <p class="resto-desc">Chef Evan Funke rolls every single pasta by hand and you can taste that dedication in every bite. The tagliatelle is genuinely one of the best things in LA.</p>
+        <div class="resto-tags"><span class="tag">Handmade Pasta</span><span class="tag">Upscale</span><span class="tag">Romantic</span></div>
+        <div class="ne-take">Watch the pasta being rolled through the glass — it's a whole moment!! Save room for the tiramisu or you will regret it!! 🤌🏾</div>
+      </div>
+    </div>
+    <div class="resto-card">
+      <div class="resto-img">
+        <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=600&q=80" alt="Jon and Vinnys">
+        <div class="resto-badge">🍕 Wood-Fired</div><div class="resto-save">🔥</div>
+      </div>
+      <div class="resto-body">
+        <div class="resto-name">Jon & Vinny's</div>
+        <div class="resto-loc">📍 Fairfax & Brentwood</div>
+        <p class="resto-desc">LA's most beloved neighborhood Italian — energy that just makes you happy the moment you walk in. The spicy rigatoni vodka is criminally addictive.</p>
+        <div class="resto-tags"><span class="tag">Lively</span><span class="tag">Wine List</span><span class="tag">LA Favorite</span></div>
+        <div class="ne-take">The spicy rigatoni is NON-NEGOTIABLE. I have been here 12+ times and order it every single time. A forever fave and I will not apologize!! 😩</div>
+      </div>
+    </div>
+    <div class="resto-card">
+      <div class="resto-img">
+        <img src="https://images.unsplash.com/photo-1574894709920-11b28e7367e3?w=600&q=80" alt="Bestia">
+        <div class="resto-badge">🎭 Arts District</div><div class="resto-save">😍</div>
+      </div>
+      <div class="resto-body">
+        <div class="resto-name">Bestia</div>
+        <div class="resto-loc">📍 Arts District, DTLA</div>
+        <p class="resto-desc">Rustic Italian in an industrial space that absolutely buzzes every single night. The charcuterie, pasta, and wood-roasted dishes are all next-level.</p>
+        <div class="resto-tags"><span class="tag">Arts District</span><span class="tag">Scene-y</span><span class="tag">Book Ahead</span></div>
+        <div class="ne-take">Book like 3 weeks out — it's that popular!! But when you're in?? The VIBE alone is worth it. One of the most beautiful restaurants in LA!! 🖤</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ BLACK OWNED ═══════════ -->
+<section id="blackowned" class="cat-section">
+  <div class="cat-hero">
+    <img src="https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=1400&q=80" alt="Soul food">
+    <div class="cat-hero-overlay"></div>
+    <div class="cat-hero-content">
+      <span class="cat-hero-emoji">✊🏾</span>
+      <h2 class="cat-hero-title">Black <span>Owned</span></h2>
+      <p class="cat-hero-desc">Supporting Black excellence one incredible meal at a time 💛🖤</p>
+    </div>
+  </div>
+  <div class="filter-row">
+    <button class="filter-pill on">✊🏾 All</button>
+    <button class="filter-pill">🍗 Soul Food</button>
+    <button class="filter-pill">🌴 Caribbean</button>
+    <button class="filter-pill">🌟 Fine Dining</button>
+    <button class="filter-pill">☕ Café</button>
+    <button class="filter-pill">⭐ Ne's Faves</button>
+  </div>
+  <div class="cat-intro">
+    <div class="ne-avatar">✊🏾</div>
+    <div class="ne-bubble"><span class="ne-name">Ne says:</span> Supporting Black-owned restaurants is something I am deeply passionate about — and the great news is LA's Black-owned food scene is absolutely THRIVING!! The culture AND the food are completely unmatched!! 🙌🏾💛</div>
+  </div>
+  <div class="restaurants-grid">
+    <div class="resto-card">
+      <div class="resto-img">
+        <img src="https://images.unsplash.com/photo-1562802378-063ec186a863?w=600&q=80" alt="Post and Beam">
+        <div class="resto-badge">🌟 Elevated</div><div class="resto-save">❤️</div>
+      </div>
+      <div class="resto-body">
+        <div class="resto-name">Post & Beam</div>
+        <div class="resto-loc">📍 Baldwin Hills Crenshaw</div>
+        <p class="resto-desc">Chef John Cleveland serving elevated California cuisine right in the heart of Crenshaw. A community anchor with food that genuinely moves you.</p>
+        <div class="resto-tags"><span class="tag">Upscale</span><span class="tag">Californian</span><span class="tag">Community Icon</span></div>
+        <div class="ne-take">This restaurant makes me so proud. Incredible food, beautiful space, in OUR community. Bring everyone you love!! 💛🖤</div>
+      </div>
+    </div>
+    <div class="resto-card">
+      <div class="resto-img">
+        <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&q=80" alt="Soul food">
+        <div class="resto-badge">🍗 Soul Food</div><div class="resto-save">🔥</div>
+      </div>
+      <div class="resto-body">
+        <div class="resto-name">M&M Soul Food</div>
+        <div class="resto-loc">📍 Inglewood</div>
+        <p class="resto-desc">No-frills, maximum soul. Smothered oxtails, fried chicken, and cornbread that tastes exactly like it was made with love — because it was.</p>
+        <div class="resto-tags"><span class="tag">Soul Food</span><span class="tag">Authentic</span><span class="tag">Comfort</span></div>
+        <div class="ne-take">The oxtails are legendary and I will not hear otherwise!! The mac & cheese is criminal levels of good. A forever go-to!! 🧡</div>
+      </div>
+    </div>
+    <div class="resto-card">
+      <div class="resto-img">
+        <img src="https://images.unsplash.com/photo-1555939594-58d7cb561ad1?w=600&q=80" alt="Simply Wholesome">
+        <div class="resto-badge">🌿 30+ Years</div><div class="resto-save">💛</div>
+      </div>
+      <div class="resto-body">
+        <div class="resto-name">Simply Wholesome</div>
+        <div class="resto-loc">📍 View Park</div>
+        <p class="resto-desc">Caribbean-influenced, health-conscious, and over 30 years deep in the community. The veggie patties and jerk options are genuinely incredible.</p>
+        <div class="resto-tags"><span class="tag">Caribbean</span><span class="tag">Health Conscious</span><span class="tag">Institution</span></div>
+        <div class="ne-take">A true institution!! Proof that healthy food can taste AMAZING. The Caribbean vibes are everything — I love this place so much!! 🌴</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ SEAFOOD BOIL ═══════════ -->
+<section id="seafood" class="cat-section">
+  <div class="cat-hero">
+    <img src="https://images.unsplash.com/photo-1565680018434-b513d5e5fd47?w=1400&q=80" alt="Seafood boil">
+    <div class="cat-hero-overlay"></div>
+    <div class="cat-hero-content">
+      <span class="cat-hero-emoji">🦞</span>
+      <h2 class="cat-hero-title">Seafood <span>Boil</span></h2>
+      <p class="cat-hero-desc">Bib on. Sleeves rolled. Let's absolutely GET IT!! 🦀🔥</p>
+    </div>
+  </div>
+  <div class="filter-row">
+    <button class="filter-pill on">🦞 All</button>
+    <button class="filter-pill">🦀 Crab</button>
+    <button class="filter-pill">🍤 Shrimp</button>
+    <button class="filter-pill">🌶️ Extra Spicy</button>
+    <button class="filter-pill">💰 Best Value</button>
+    <button class="filter-pill">⭐ Ne's Faves</button>
+  </div>
+  <div class="cat-intro">
+    <div class="ne-avatar">🦞</div>
+    <div class="ne-bubble"><span class="ne-name">Ne says:</span> A seafood boil is NOT just a meal, it's an EVENT!! 🦀 Bibs, garlic butter, Cajun spice, butcher paper everywhere — this is a full experience and LA's spots deliver every time. Come hungry and come with your people!! 🔥</div>
+  </div>
+  <div class="restaurants-grid">
+    <div class="resto-card">
+      <div class="resto-img">
+        <img src="https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?w=600&q=80" alt="Boiling Crab">
+        <div class="resto-badge">🦀 The OG</div><div class="resto-save">❤️</div>
+      </div>
+      <div class="resto-body">
+        <div class="resto-name">The Boiling Crab</div>
+        <div class="resto-loc">📍 Multiple LA Locations</div>
+        <p class="resto-desc">The OG of LA seafood boils. The Whole Shebang sauce — Cajun, lemon pepper, garlic butter ALL together — is a full religious experience in a bag.</p>
+        <div class="resto-tags"><span class="tag">Cajun</span><span class="tag">Messy & Good</span><span class="tag">Classic</span></div>
+        <div class="ne-take">Get the Whole Shebang on everything!! Add corn and potatoes. Bring napkins and people you're comfortable being an absolute mess in front of!! 😂🦀</div>
+      </div>
+    </div>
+    <div class="resto-card">
+      <div class="resto-img">
+        <img src="https://images.unsplash.com/photo-1559847844-5315695dadae?w=600&q=80" alt="Hook and Reel">
+        <div class="resto-badge">🎉 Full Experience</div><div class="resto-save">🔥</div>
+      </div>
+      <div class="resto-body">
+        <div class="resto-name">Hook & Reel</div>
+        <div class="resto-loc">📍 Inglewood & Gardena</div>
+        <p class="resto-desc">A full seafood boil experience from bib to cleanup. Dungeness crab, snow crab, jumbo shrimp, and sausage in a perfectly spiced bag.</p>
+        <div class="resto-tags"><span class="tag">Lively Atmosphere</span><span class="tag">Family Style</span><span class="tag">Fun Vibes</span></div>
+        <div class="ne-take">The atmosphere is SO fun — music, great food, great energy. Perfect for birthdays or a big group night out!! Love this spot!! 🎉🦐</div>
+      </div>
+    </div>
+    <div class="resto-card">
+      <div class="resto-img">
+        <img src="https://images.unsplash.com/photo-1571091655789-405eb7a3a3a8?w=600&q=80" alt="Angry Crab">
+        <div class="resto-badge">🌶️ Bold Flavors</div><div class="resto-save">💛</div>
+      </div>
+      <div class="resto-body">
+        <div class="resto-name">Angry Crab</div>
+        <div class="resto-loc">📍 Compton</div>
+        <p class="resto-desc">Community-loved and locally owned. Generous portions, bold spice, and neighborhood energy that makes every visit feel like a party.</p>
+        <div class="resto-tags"><span class="tag">Local Favorite</span><span class="tag">Bold Spice</span><span class="tag">Community</span></div>
+        <div class="ne-take">A hidden gem for real!! Generous portions, fair prices, genuinely amazing food. This is why we support local — don't sleep!! 🙌🏾</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ DESSERT ═══════════ -->
+<section id="dessert" class="cat-section">
+  <div class="cat-hero">
+    <img src="https://images.unsplash.com/photo-1551024601-bec78aea704b?w=1400&q=80" alt="Dessert">
+    <div class="cat-hero-overlay"></div>
+    <div class="cat-hero-content">
+      <span class="cat-hero-emoji">🍰</span>
+      <h2 class="cat-hero-title">Dessert <span>Spots</span></h2>
+      <p class="cat-hero-desc">There is ALWAYS room for dessert — don't let anyone gaslight you!! 🍨</p>
+    </div>
+  </div>
+  <div class="filter-row">
+    <button class="filter-pill on">🍰 All</button>
+    <button class="filter-pill">🍦 Ice Cream</button>
+    <button class="filter-pill">🧁 Bakery</button>
+    <button class="filter-pill">🧋 Boba</button>
+    <button class="filter-pill">🍫 Chocolate</button>
+    <button class="filter-pill">⭐ Ne's Faves</button>
+  </div>
+  <div class="cat-intro">
+    <div class="ne-avatar">🍰</div>
+    <div class="ne-bubble"><span class="ne-name">Ne says:</span> People will try to tell you dessert isn't a full meal. Those people are WRONG and you should not listen to them!! 😂 LA's dessert spots are incredible — I have done all the sugary research so you absolutely don't have to!! 💛</div>
+  </div>
+  <div class="restaurants-grid">
+    <div class="resto-card">
+      <div class="resto-img">
+        <img src="https://images.unsplash.com/photo-1563805042-7684c019e1cb?w=600&q=80" alt="Salt and Straw">
+        <div class="resto-badge">🍦 Artisan</div><div class="resto-save">❤️</div>
+      </div>
+      <div class="resto-body">
+        <div class="resto-name">Salt & Straw</div>
+        <div class="resto-loc">📍 Larchmont, Venice & Pasadena</div>
+        <p class="resto-desc">Creative craft ice cream with flavors that genuinely make you stop and think. Always surprising, always seasonal, always absolutely worth the line.</p>
+        <div class="resto-tags"><span class="tag">Artisan</span><span class="tag">Unique Flavors</span><span class="tag">Lines Always</span></div>
+        <div class="ne-take">Try their weirdest seasonal flavor and TRUST THE PROCESS!! The pear & blue cheese converted me as a full skeptic — I'm never going back!! 🍐😩</div>
+      </div>
+    </div>
+    <div class="resto-card">
+      <div class="resto-img">
+        <img src="https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=600&q=80" alt="Milk Jar">
+        <div class="resto-badge">🍪 Cookie Goals</div><div class="resto-save">🔥</div>
+      </div>
+      <div class="resto-body">
+        <div class="resto-name">Milk Jar Cookies</div>
+        <div class="resto-loc">📍 Hancock Park</div>
+        <p class="resto-desc">Monster cookies with gooey centers that sell out frighteningly fast. The ice cream sandwiches are equally dangerous and the seasonal specials never miss.</p>
+        <div class="resto-tags"><span class="tag">Cookies</span><span class="tag">Ice Cream Sandwiches</span><span class="tag">Sells Out!</span></div>
+        <div class="ne-take">Get there before noon or you WILL be devastated. The brown butter chocolate chip cookie is what dessert dreams are literally made of!! 🍪💛</div>
+      </div>
+    </div>
+    <div class="resto-card">
+      <div class="resto-img">
+        <img src="https://images.unsplash.com/photo-1614707267537-b85aaf00c4b7?w=600&q=80" alt="Boba Guys">
+        <div class="resto-badge">🧋 Premium Boba</div><div class="resto-save">😍</div>
+      </div>
+      <div class="resto-body">
+        <div class="resto-name">Boba Guys</div>
+        <div class="resto-loc">📍 Silver Lake & DTLA</div>
+        <p class="resto-desc">Premium boba elevated to a real art form. The Strawberry Matcha latte and house milk teas are some of the best you'll find anywhere on the West Coast.</p>
+        <div class="resto-tags"><span class="tag">Boba</span><span class="tag">Trendy</span><span class="tag">Premium</span></div>
+        <div class="ne-take">The Strawberry Matcha latte is basically my personality at this point and I refuse to be normal about it. Absolutely PERFECT every time!! 🍓🍵</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div class="footer-brand">
+      <div class="logo">Eats <span>With Ne</span> 🍴</div>
+      <p>Hey, I'm Trene — LA-based food content creator & on-camera host. Building community through food reviews, one restaurant at a time. No gatekeeping, just good eats! 🌟</p>
+      <a href="mailto:trendyera.com@gmail.com" class="footer-email">✉️ trendyera.com@gmail.com</a>
+    </div>
+    <div class="footer-col">
+      <h4>🍽️ Explore</h4>
+      <ul>
+        <li><button onclick="showSection('mexican')">🌮 Mexican Food</button></li>
+        <li><button onclick="showSection('burgers')">🍔 Smash Burgers</button></li>
+        <li><button onclick="showSection('brunch')">🥂 Brunch Spots</button></li>
+        <li><button onclick="showSection('asian')">🍜 Asian Eats</button></li>
+        <li><button onclick="showSection('italian')">🍝 Italian</button></li>
+        <li><button onclick="showSection('blackowned')">✊🏾 Black Owned</button></li>
+        <li><button onclick="showSection('seafood')">🦞 Seafood Boil</button></li>
+        <li><button onclick="showSection('dessert')">🍰 Dessert</button></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>📲 Follow Along</h4>
+      <ul>
+        <li><a href="https://www.instagram.com/eatswithne/" target="_blank">📸 @eatswithne on Instagram</a></li>
+        <li><a href="#">🎵 @eatswithne on TikTok</a></li>
+        <li><a href="#">▶️ Eats With Ne on YouTube</a></li>
+        <li><a href="mailto:trendyera.com@gmail.com">✉️ Business Inquiries</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 Eats With Ne · Los Angeles, CA 🌴</p>
+    <p>Made with love & a very full stomach 🍽️ 🔥 💛</p>
+  </div>
+</footer>
+
+<script>
+  // Cursor
+  const dot = document.getElementById('cDot');
+  const blob = document.getElementById('cBlob');
+  document.addEventListener('mousemove', e => {
+    dot.style.left = e.clientX + 'px'; dot.style.top = e.clientY + 'px';
+    setTimeout(() => { blob.style.left = e.clientX + 'px'; blob.style.top = e.clientY + 'px'; }, 90);
+  });
+
+  // Section switching
+  function showSection(id) {
+    document.querySelectorAll('section').forEach(s => s.classList.remove('visible'));
+    const t = document.getElementById(id);
+    if (t) { t.classList.add('visible'); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+    document.querySelectorAll('.nav-tabs button').forEach(b => b.classList.toggle('active', b.dataset.section === id));
+  }
+  document.querySelectorAll('.nav-tabs button[data-section]').forEach(btn => {
+    btn.addEventListener('click', () => showSection(btn.dataset.section));
+  });
+
+  // Filter pills
+  document.querySelectorAll('.filter-row').forEach(row => {
+    row.querySelectorAll('.filter-pill').forEach(pill => {
+      pill.addEventListener('click', () => {
+        row.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('on'));
+        pill.classList.add('on');
+      });
+    });
+  });
+</script>
+</body>
+</html>
